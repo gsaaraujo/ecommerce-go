@@ -21,7 +21,7 @@ func NewCart(customerId uuid.UUID) (Cart, error) {
 	}, nil
 }
 
-func (c *Cart) AddItem(productId uuid.UUID, quantity int16, price int64) error {
+func (c *Cart) AddItem(productId uuid.UUID, quantity int32, price int64) error {
 	if _, err := models.NewQuantity(quantity); err != nil {
 		return err
 	}
@@ -63,7 +63,7 @@ func (c *Cart) RemoveItem(productId uuid.UUID) error {
 }
 
 func (c *Cart) TotalQuantity() models.Quantity {
-	totalQuantity := int16(0)
+	totalQuantity := int32(0)
 
 	for _, item := range c.Items {
 		totalQuantity += item.Quantity.Value

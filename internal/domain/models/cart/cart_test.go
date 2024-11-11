@@ -27,7 +27,7 @@ func Test_add_items_should_succeed_1(t *testing.T) {
 	cart.AddItem(product1, 5, 32000)
 
 	assert.Equal(t, int(1), len(cart.Items))
-	assert.Equal(t, int16(7), cart.TotalQuantity().Value)
+	assert.Equal(t, int32(7), cart.TotalQuantity().Value)
 	assert.Equal(t, int64(224000), cart.TotalPrice().Value)
 }
 
@@ -45,7 +45,7 @@ func Test_add_items_should_succeed_2(t *testing.T) {
 	cart.AddItem(product3, 9, 1550)
 
 	assert.Equal(t, int(3), len(cart.Items))
-	assert.Equal(t, int16(21), cart.TotalQuantity().Value)
+	assert.Equal(t, int32(21), cart.TotalQuantity().Value)
 	assert.Equal(t, int64(251350), cart.TotalPrice().Value)
 }
 
@@ -58,7 +58,7 @@ func Test_remove_items_should_succeed_1(t *testing.T) {
 	cart.RemoveItem(product1)
 
 	assert.Equal(t, int(0), len(cart.Items))
-	assert.Equal(t, int16(0), cart.TotalQuantity().Value)
+	assert.Equal(t, int32(0), cart.TotalQuantity().Value)
 	assert.Equal(t, int64(0), cart.TotalPrice().Value)
 }
 
@@ -77,7 +77,7 @@ func Test_remove_items_should_succeed_2(t *testing.T) {
 	cart.RemoveItem(product2)
 
 	assert.Equal(t, int(2), len(cart.Items))
-	assert.Equal(t, int16(11), cart.TotalQuantity().Value)
+	assert.Equal(t, int32(11), cart.TotalQuantity().Value)
 	assert.Equal(t, int64(77950), cart.TotalPrice().Value)
 }
 
@@ -95,7 +95,7 @@ func Test_remove_items_should_succeed_3(t *testing.T) {
 	cart.AddItem(product3, 9, 1550)
 
 	assert.Equal(t, int(1), len(cart.Items))
-	assert.Equal(t, int16(9), cart.TotalQuantity().Value)
+	assert.Equal(t, int32(9), cart.TotalQuantity().Value)
 	assert.Equal(t, int64(13950), cart.TotalPrice().Value)
 }
 

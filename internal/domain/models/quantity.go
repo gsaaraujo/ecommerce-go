@@ -3,10 +3,10 @@ package models
 import "errors"
 
 type Quantity struct {
-	Value int16
+	Value int32
 }
 
-func NewQuantity(value int16) (Quantity, error) {
+func NewQuantity(value int32) (Quantity, error) {
 	if value < 0 {
 		return Quantity{}, errors.New("quantity value cannot be negative")
 	}

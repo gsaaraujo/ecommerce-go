@@ -16,7 +16,7 @@ func Test_create_cart_item_should_succeed(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, productId, sut.ProductId)
 	assert.Equal(t, int64(2550), sut.Price.Value)
-	assert.Equal(t, int16(2), sut.Quantity.Value)
+	assert.Equal(t, int32(2), sut.Quantity.Value)
 	assert.Equal(t, int64(5100), sut.TotalPrice().Value)
 }
 
@@ -29,7 +29,7 @@ func Test_increase_quantity_should_succeed(t *testing.T) {
 
 	assert.Equal(t, productId, cart.ProductId)
 	assert.Equal(t, int64(2550), cart.Price.Value)
-	assert.Equal(t, int16(20), cart.Quantity.Value)
+	assert.Equal(t, int32(20), cart.Quantity.Value)
 	assert.Equal(t, int64(51000), cart.TotalPrice().Value)
 }
 
@@ -47,7 +47,7 @@ func Test_increase_and_decrease_quantity_should_succeed(t *testing.T) {
 
 	assert.Equal(t, productId, cart.ProductId)
 	assert.Equal(t, int64(2550), cart.Price.Value)
-	assert.Equal(t, int16(25), cart.Quantity.Value)
+	assert.Equal(t, int32(25), cart.Quantity.Value)
 	assert.Equal(t, int64(63750), cart.TotalPrice().Value)
 }
 
@@ -59,7 +59,7 @@ func Test_decrease_quantity_with_higher_value_than_current_should_result_in_pric
 
 	assert.Equal(t, productId, cart.ProductId)
 	assert.Equal(t, int64(0), cart.Price.Value)
-	assert.Equal(t, int16(0), cart.Quantity.Value)
+	assert.Equal(t, int32(0), cart.Quantity.Value)
 	assert.Equal(t, int64(0), cart.TotalPrice().Value)
 }
 

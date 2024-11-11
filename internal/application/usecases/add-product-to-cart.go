@@ -12,8 +12,7 @@ import (
 type AddProductToCartInput struct {
 	CustomerId uuid.UUID
 	ProductId  uuid.UUID
-	Price      int64
-	Quantity   int16
+	Quantity   int32
 }
 
 type IAddProductToCart interface {
@@ -22,6 +21,7 @@ type IAddProductToCart interface {
 
 type AddProductToCart struct {
 	CustomerGateway gateways.ICustomerGateway
+	ProductGateway  gateways.IProductGateway
 	CartRepository  repositories.ICartRepository
 }
 
@@ -35,13 +35,22 @@ func (a *AddProductToCart) Execute(input AddProductToCartInput) error {
 		return errors.New("customer not found")
 	}
 
+	product, err := a.ProductGateway.FindOneById(input.ProductId)
+	if err != nil {
+		return err
+	}
+
+	if product == nil {
+		return errors.New("product not found")
+	}
+
 	customerCart, err := a.CartRepository.FindOneByCustomerId(input.CustomerId)
 	if err != nil {
 		return err
 	}
 
 	if customerCart != nil {
-		err := customerCart.AddItem(input.ProductId, input.Quantity, input.Price)
+		err := customerCart.AddItem(product.Id, input.Quantity, product.Price)
 		if err != nil {
 			return err
 		}
@@ -59,7 +68,7 @@ func (a *AddProductToCart) Execute(input AddProductToCartInput) error {
 		return err
 	}
 
-	err = newCart.AddItem(input.ProductId, input.Quantity, input.Price)
+	err = newCart.AddItem(product.Id, input.Quantity, product.Price)
 	if err != nil {
 		return err
 	}

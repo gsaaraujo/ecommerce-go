@@ -14,7 +14,7 @@ type CartItem struct {
 	Price     models.Money
 }
 
-func NewCartItem(productId uuid.UUID, quantity int16, price int64) (CartItem, error) {
+func NewCartItem(productId uuid.UUID, quantity int32, price int64) (CartItem, error) {
 	if _, err := models.NewQuantity(quantity); err != nil {
 		return CartItem{}, err
 	}
@@ -23,7 +23,7 @@ func NewCartItem(productId uuid.UUID, quantity int16, price int64) (CartItem, er
 		return CartItem{}, err
 	}
 
-	MINIMUM_QUANTITY := int16(1)
+	MINIMUM_QUANTITY := int32(1)
 	if quantity < MINIMUM_QUANTITY {
 		return CartItem{}, errors.New("cart item quantity cannot be less than one")
 	}
@@ -36,12 +36,12 @@ func NewCartItem(productId uuid.UUID, quantity int16, price int64) (CartItem, er
 	}, nil
 }
 
-func (c *CartItem) IncreaseQuantity(quantity int16) error {
+func (c *CartItem) IncreaseQuantity(quantity int32) error {
 	if _, err := models.NewQuantity(quantity); err != nil {
 		return err
 	}
 
-	MINIMUM_QUANTITY := int16(1)
+	MINIMUM_QUANTITY := int32(1)
 	if quantity < MINIMUM_QUANTITY {
 		return errors.New("cart item quantity cannot be less than one")
 	}
@@ -50,12 +50,12 @@ func (c *CartItem) IncreaseQuantity(quantity int16) error {
 	return nil
 }
 
-func (c *CartItem) DecreaseQuantity(quantity int16) error {
+func (c *CartItem) DecreaseQuantity(quantity int32) error {
 	if _, err := models.NewQuantity(quantity); err != nil {
 		return err
 	}
 
-	MINIMUM_QUANTITY := int16(1)
+	MINIMUM_QUANTITY := int32(1)
 	if quantity < MINIMUM_QUANTITY {
 		return errors.New("cart item quantity cannot be less than one")
 	}

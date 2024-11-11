@@ -11,7 +11,7 @@ func Test_create_quantity_should_succeed(t *testing.T) {
 	sut, err := models.NewQuantity(10)
 
 	assert.NoError(t, err)
-	assert.Equal(t, int16(10), sut.Value)
+	assert.Equal(t, int32(10), sut.Value)
 }
 
 func Test_create_quantity_with_negative_value_should_fail(t *testing.T) {
