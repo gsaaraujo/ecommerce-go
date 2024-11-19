@@ -2,11 +2,11 @@ package gateways
 
 import "github.com/google/uuid"
 
-type Product struct {
+type ProductDTO struct {
 	Id    uuid.UUID
 	Price int64
 }
 
 type IProductGateway interface {
-	FindOneById(id uuid.UUID) (*Product, error)
+	FindOneById(id uuid.UUID) (*ProductDTO, error)
 }

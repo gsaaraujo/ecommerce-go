@@ -15,7 +15,7 @@ type CustomerGatewayMock struct {
 	mock.Mock
 }
 
-func (c *CustomerGatewayMock) ExistsByCustomerId(customerId uuid.UUID) (bool, error) {
+func (c *CustomerGatewayMock) ExistsById(customerId uuid.UUID) (bool, error) {
 	args := c.Called(customerId)
 	return args.Bool(0), args.Error(1)
 }
@@ -47,13 +47,13 @@ type ProductGatewayMock struct {
 	mock.Mock
 }
 
-func (p *ProductGatewayMock) FindOneById(id uuid.UUID) (*gateways.Product, error) {
+func (p *ProductGatewayMock) FindOneById(id uuid.UUID) (*gateways.ProductDTO, error) {
 	args := p.Called(id)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(*gateways.Product), args.Error(1)
+	return args.Get(0).(*gateways.ProductDTO), args.Error(1)
 }
 
 type AddProductToCartSuite struct {
@@ -77,11 +77,11 @@ func (a *AddProductToCartSuite) SetupTest() {
 }
 
 func (a *AddProductToCartSuite) Test_add_product_to_new_cart_should_succeed() {
-	product := gateways.Product{
+	product := gateways.ProductDTO{
 		Id:    uuid.New(),
 		Price: int64(3550),
 	}
-	a.customerGatewayMock.On("ExistsByCustomerId", mock.Anything).Return(true, nil)
+	a.customerGatewayMock.On("ExistsById", mock.Anything).Return(true, nil)
 	a.cartRepositoryMock.On("FindOneByCustomerId", mock.Anything).Return(nil, nil)
 	a.productGatewayMock.On("FindOneById", mock.Anything).Return(&product, nil)
 	a.cartRepositoryMock.On("Create", mock.Anything).Return(nil)
@@ -104,11 +104,11 @@ func (a *AddProductToCartSuite) Test_add_product_to_existing_cart_should_succeed
 		CustomerId: uuid.New(),
 		Items:      []cart.CartItem{},
 	}
-	product := gateways.Product{
+	product := gateways.ProductDTO{
 		Id:    uuid.New(),
 		Price: int64(3550),
 	}
-	a.customerGatewayMock.On("ExistsByCustomerId", mock.Anything).Return(true, nil)
+	a.customerGatewayMock.On("ExistsById", mock.Anything).Return(true, nil)
 	a.cartRepositoryMock.On("FindOneByCustomerId", mock.Anything).Return(&customerCart, nil)
 	a.productGatewayMock.On("FindOneById", mock.Anything).Return(&product, nil)
 	a.cartRepositoryMock.On("Update", mock.Anything).Return(nil)
@@ -126,12 +126,12 @@ func (a *AddProductToCartSuite) Test_add_product_to_existing_cart_should_succeed
 }
 
 func (a *AddProductToCartSuite) Test_add_product_to_cart_with_customer_that_does_not_exist_should_fail() {
-	product := gateways.Product{
+	product := gateways.ProductDTO{
 		Id:    uuid.New(),
 		Price: int64(3550),
 	}
 	a.productGatewayMock.On("FindOneById", mock.Anything).Return(&product, nil)
-	a.customerGatewayMock.On("ExistsByCustomerId", mock.Anything).Return(false, nil)
+	a.customerGatewayMock.On("ExistsById", mock.Anything).Return(false, nil)
 	input := usecases.AddProductToCartInput{
 		CustomerId: uuid.New(),
 		ProductId:  uuid.New(),
@@ -144,7 +144,7 @@ func (a *AddProductToCartSuite) Test_add_product_to_cart_with_customer_that_does
 }
 
 func (a *AddProductToCartSuite) Test_add_product_to_cart_with_product_that_does_not_exist_should_fail() {
-	a.customerGatewayMock.On("ExistsByCustomerId", mock.Anything).Return(true, nil)
+	a.customerGatewayMock.On("ExistsById", mock.Anything).Return(true, nil)
 	a.productGatewayMock.On("FindOneById", mock.Anything).Return(nil, nil)
 	input := usecases.AddProductToCartInput{
 		CustomerId: uuid.New(),

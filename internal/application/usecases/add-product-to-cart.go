@@ -26,7 +26,7 @@ type AddProductToCart struct {
 }
 
 func (a *AddProductToCart) Execute(input AddProductToCartInput) error {
-	customerExists, err := a.CustomerGateway.ExistsByCustomerId(input.CustomerId)
+	customerExists, err := a.CustomerGateway.ExistsById(input.CustomerId)
 	if err != nil {
 		return err
 	}
