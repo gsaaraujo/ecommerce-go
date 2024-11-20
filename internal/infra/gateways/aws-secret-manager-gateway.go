@@ -16,12 +16,12 @@ type AwsSecretManagerGateway struct {
 }
 
 func (s *AwsSecretManagerGateway) Get(key string) (string, error) {
-	if _, ok := os.LookupEnv("SECRET_MANAGER_NAME"); !ok {
-		return "", errors.New("environment variable 'SECRET_MANAGER_NAME' not set")
+	if _, ok := os.LookupEnv("AWS_SECRET_MANAGER_NAME"); !ok {
+		return "", errors.New("environment variable 'AWS_SECRET_MANAGER_NAME' not set")
 	}
 
 	result, err := s.SecretManager.GetSecretValue(context.TODO(), &secretsmanager.GetSecretValueInput{
-		SecretId: aws.String(os.Getenv("SECRET_MANAGER_NAME")),
+		SecretId: aws.String(os.Getenv("AWS_SECRET_MANAGER_NAME")),
 	})
 
 	if err != nil {
