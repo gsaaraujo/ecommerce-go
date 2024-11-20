@@ -15,32 +15,32 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type AddToProductMock struct {
+type AddProductToCartMock struct {
 	mock.Mock
 }
 
-func (a *AddToProductMock) Execute(input usecases.AddProductToCartInput) error {
+func (a *AddProductToCartMock) Execute(input usecases.AddProductToCartInput) error {
 	args := a.Called(input)
 	return args.Error(0)
 }
 
 type AddToProductHandlerSuite struct {
 	suite.Suite
-	addToProductMock    AddToProductMock
-	addToProductHandler handlers.AddProductToCartHandler
+	addProductToCartMock    AddProductToCartMock
+	addProductToCartHandler handlers.AddProductToCartHandler
 }
 
 func (a *AddToProductHandlerSuite) SetupTest() {
-	a.addToProductMock = AddToProductMock{}
-	a.addToProductHandler = handlers.AddProductToCartHandler{
+	a.addProductToCartMock = AddProductToCartMock{}
+	a.addProductToCartHandler = handlers.AddProductToCartHandler{
 		Validator:        infra.NewValidator(),
-		AddProductToCart: &a.addToProductMock,
+		AddProductToCart: &a.addProductToCartMock,
 	}
 }
 
 func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_no_errors_should_succeed() {
 	e := echo.New()
-	a.addToProductMock.On("Execute", mock.Anything).Return(nil)
+	a.addProductToCartMock.On("Execute", mock.Anything).Return(nil)
 	request := httptest.NewRequest("POST", "/", strings.NewReader(`
 		{
 			"productId": "632ef70b-4184-4704-ad7d-8b8f5dd534d9",
@@ -52,7 +52,7 @@ func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_no_erro
 	context := e.NewContext(request, recorder)
 	context.Set("customerId", "5ad98fc5-6b0f-45fd-a886-d6a15a63c833")
 
-	a.addToProductHandler.Handle(context)
+	a.addProductToCartHandler.Handle(context)
 
 	a.Equal(200, recorder.Code)
 	a.JSONEq(`
@@ -67,7 +67,7 @@ func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_no_erro
 
 func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_product_not_found_error_should_fail() {
 	e := echo.New()
-	a.addToProductMock.On("Execute", mock.Anything).Return(errors.New("product not found"))
+	a.addProductToCartMock.On("Execute", mock.Anything).Return(errors.New("product not found"))
 	request := httptest.NewRequest("POST", "/", strings.NewReader(`
 		{
 			"productId": "632ef70b-4184-4704-ad7d-8b8f5dd534d9",
@@ -79,7 +79,7 @@ func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_product
 	context := e.NewContext(request, recorder)
 	context.Set("customerId", "5ad98fc5-6b0f-45fd-a886-d6a15a63c833")
 
-	a.addToProductHandler.Handle(context)
+	a.addProductToCartHandler.Handle(context)
 
 	a.Equal(404, recorder.Code)
 	a.JSONEq(`
@@ -93,7 +93,7 @@ func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_product
 }
 
 func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_should_fail_with_invalid_body() {
-	a.addToProductMock.On("Execute", mock.Anything).Return(nil)
+	a.addProductToCartMock.On("Execute", mock.Anything).Return(nil)
 	bodiesAndErrors := []map[string]string{
 		{
 			"body":   `abc`,
@@ -158,7 +158,7 @@ func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_should_fail_
 		recorder := httptest.NewRecorder()
 		context := e.NewContext(request, recorder)
 
-		a.addToProductHandler.Handle(context)
+		a.addProductToCartHandler.Handle(context)
 
 		a.Equal(400, recorder.Code)
 		a.JSONEq(fmt.Sprintf(`
