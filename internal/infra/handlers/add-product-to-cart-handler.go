@@ -23,26 +23,26 @@ type AddProductToCartHandler struct {
 func (a *AddProductToCartHandler) Handle(c echo.Context) error {
 	handlerInput := AddProductToCartHandlerInput{}
 	if err := c.Bind(&handlerInput); err != nil {
-		return c.JSON(400, webhttp.NewBadRequestValidation([]string{"content-type must be application/json."}))
+		return webhttp.NewBadRequestValidation(c, []string{"content-type must be application/json."})
 	}
 
 	errorsMessages := a.Validator.Validate(handlerInput)
 	if len(errorsMessages) > 0 {
-		return c.JSON(400, webhttp.NewBadRequestValidation(errorsMessages))
+		return webhttp.NewBadRequestValidation(c, errorsMessages)
 	}
 
 	productId, err := uuid.Parse(*handlerInput.ProductId)
 	if err != nil {
-		return c.JSON(500, webhttp.NewInternalServerError("Something went wrong. Please try again later."))
+		return webhttp.NewInternalServerError(c, "Something went wrong. Please try again later.")
 	}
 
 	if c.Get("customerId") == nil {
-		return c.JSON(500, webhttp.NewInternalServerError("Something went wrong. Please try again later."))
+		return webhttp.NewInternalServerError(c, "Something went wrong. Please try again later.")
 	}
 
 	customerId, err := uuid.Parse(c.Get("customerId").(string))
 	if err != nil {
-		return c.JSON(500, webhttp.NewInternalServerError("Something went wrong. Please try again later."))
+		return webhttp.NewInternalServerError(c, "Something went wrong. Please try again later.")
 	}
 
 	err = a.AddProductToCart.Execute(usecases.AddProductToCartInput{
@@ -54,12 +54,12 @@ func (a *AddProductToCartHandler) Handle(c echo.Context) error {
 	if err != nil {
 		switch err.Error() {
 		case "product not found":
-			return c.JSON(404, webhttp.NewNotFound(fmt.Sprintf(`We couldn't find a product with the ID '%s'. Please check the product ID and try again.`,
-				*handlerInput.ProductId)))
+			return webhttp.NewNotFound(c, fmt.Sprintf(`We couldn't find a product with the ID '%s'. Please check the product ID and try again.`,
+				*handlerInput.ProductId))
 		}
 
-		return c.JSON(500, webhttp.NewInternalServerError("Something went wrong. Please try again later."))
+		return webhttp.NewInternalServerError(c, "Something went wrong. Please try again later.")
 	}
 
-	return c.JSON(200, webhttp.NewOk(nil))
+	return webhttp.NewOk(c, nil)
 }

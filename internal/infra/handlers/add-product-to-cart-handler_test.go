@@ -24,13 +24,13 @@ func (a *AddProductToCartMock) Execute(input usecases.AddProductToCartInput) err
 	return args.Error(0)
 }
 
-type AddToProductHandlerSuite struct {
+type AddProductToCartHandlerSuite struct {
 	suite.Suite
 	addProductToCartMock    AddProductToCartMock
 	addProductToCartHandler handlers.AddProductToCartHandler
 }
 
-func (a *AddToProductHandlerSuite) SetupTest() {
+func (a *AddProductToCartHandlerSuite) SetupTest() {
 	a.addProductToCartMock = AddProductToCartMock{}
 	a.addProductToCartHandler = handlers.AddProductToCartHandler{
 		Validator:        infra.NewValidator(),
@@ -38,7 +38,7 @@ func (a *AddToProductHandlerSuite) SetupTest() {
 	}
 }
 
-func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_no_errors_should_succeed() {
+func (a *AddProductToCartHandlerSuite) TestAddProductToCartHandler_Handle_OnNoErrors_ReturnsOk() {
 	e := echo.New()
 	a.addProductToCartMock.On("Execute", mock.Anything).Return(nil)
 	request := httptest.NewRequest("POST", "/", strings.NewReader(`
@@ -65,7 +65,7 @@ func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_no_erro
 	`, recorder.Body.String())
 }
 
-func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_product_not_found_error_should_fail() {
+func (a *AddProductToCartHandlerSuite) TestAddProductToCartHandler_Handle_OnProductNotFound_ReturnsNotFound() {
 	e := echo.New()
 	a.addProductToCartMock.On("Execute", mock.Anything).Return(errors.New("product not found"))
 	request := httptest.NewRequest("POST", "/", strings.NewReader(`
@@ -92,7 +92,7 @@ func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_with_product
 	`, recorder.Body.String())
 }
 
-func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_should_fail_with_invalid_body() {
+func (a *AddProductToCartHandlerSuite) TestAddProductToCartHandler_Handle_OnInvalidBody_ReturnsBadRequest() {
 	a.addProductToCartMock.On("Execute", mock.Anything).Return(nil)
 	bodiesAndErrors := []map[string]string{
 		{
@@ -173,5 +173,5 @@ func (a *AddToProductHandlerSuite) Test_request_add_product_to_cart_should_fail_
 }
 
 func TestAddProductToCartHandler(t *testing.T) {
-	suite.Run(t, new(AddToProductHandlerSuite))
+	suite.Run(t, new(AddProductToCartHandlerSuite))
 }

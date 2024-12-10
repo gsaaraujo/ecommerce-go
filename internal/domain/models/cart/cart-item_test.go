@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_create_cart_item_should_succeed(t *testing.T) {
+func TestCartItem_NewCartItem_OnValidValues_ReturnsCartItem(t *testing.T) {
 	productId := uuid.New()
 
 	sut, err := cart.NewCartItem(productId, 2, 2550)
@@ -20,7 +20,7 @@ func Test_create_cart_item_should_succeed(t *testing.T) {
 	assert.Equal(t, int64(5100), sut.TotalPrice().Value)
 }
 
-func Test_increase_quantity_should_succeed(t *testing.T) {
+func TestCartItem_IncreaseQuantity_OnValidValues_UpdatesCartItem(t *testing.T) {
 	productId := uuid.New()
 	cart, _ := cart.NewCartItem(productId, 5, 2550)
 
@@ -33,7 +33,7 @@ func Test_increase_quantity_should_succeed(t *testing.T) {
 	assert.Equal(t, int64(51000), cart.TotalPrice().Value)
 }
 
-func Test_increase_and_decrease_quantity_should_succeed(t *testing.T) {
+func TestCartItem_DecreaseQuantity_OnValidValues_UpdatesCartItem(t *testing.T) {
 	productId := uuid.New()
 	cart, _ := cart.NewCartItem(productId, 5, 2550)
 
@@ -51,7 +51,7 @@ func Test_increase_and_decrease_quantity_should_succeed(t *testing.T) {
 	assert.Equal(t, int64(63750), cart.TotalPrice().Value)
 }
 
-func Test_decrease_quantity_with_higher_value_than_current_should_result_in_price_and_quantity_equals_zero(t *testing.T) {
+func TestCartItem_DecreaseQuantity_OnDecreaseMoreThanCurrentQuantity_UpdatesQuantityToZero(t *testing.T) {
 	productId := uuid.New()
 	cart, _ := cart.NewCartItem(productId, 5, 2500)
 
@@ -63,25 +63,25 @@ func Test_decrease_quantity_with_higher_value_than_current_should_result_in_pric
 	assert.Equal(t, int64(0), cart.TotalPrice().Value)
 }
 
-func Test_create_cart_item_with_quantity_equals_zero_should_fail(t *testing.T) {
+func TestCartItem_NewCartItem_OnQuantityEqualsZero_ReturnsError(t *testing.T) {
 	_, err := cart.NewCartItem(uuid.New(), 0, 2550)
 
 	assert.EqualError(t, err, "cart item quantity cannot be less than one")
 }
 
-func Test_create_cart_item_with_negative_quantity_should_fail(t *testing.T) {
+func TestCartItem_NewCartItem_OnNegativeQuantity_ReturnsError(t *testing.T) {
 	_, err := cart.NewCartItem(uuid.New(), -1, 2550)
 
 	assert.EqualError(t, err, "quantity value cannot be negative")
 }
 
-func Test_create_cart_item_with_negative_price_should_fail(t *testing.T) {
+func TestCartItem_NewCartItem_OnNegativePrice_ReturnsError(t *testing.T) {
 	_, err := cart.NewCartItem(uuid.New(), 1, -500)
 
 	assert.EqualError(t, err, "money value cannot be negative")
 }
 
-func Test_increase_quantity_with_quantity_less_than_one_should_fail(t *testing.T) {
+func TestCartItem_IncreaseQuantity_OnQuantityEqualsZero_ReturnsError(t *testing.T) {
 	cart, _ := cart.NewCartItem(uuid.New(), 0, 2500)
 
 	err := cart.IncreaseQuantity(0)
@@ -89,7 +89,7 @@ func Test_increase_quantity_with_quantity_less_than_one_should_fail(t *testing.T
 	assert.EqualError(t, err, "cart item quantity cannot be less than one")
 }
 
-func Test_increase_quantity_with_negative_quantity_should_fail(t *testing.T) {
+func TestCartItem_IncreaseQuantity_OnNegativeQuantity_ReturnsError(t *testing.T) {
 	productId := uuid.New()
 	cart, _ := cart.NewCartItem(productId, 5, 2550)
 
@@ -98,7 +98,7 @@ func Test_increase_quantity_with_negative_quantity_should_fail(t *testing.T) {
 	assert.EqualError(t, err, "quantity value cannot be negative")
 }
 
-func Test_decrease_quantity_with_negative_quantity_should_fail(t *testing.T) {
+func TestCartItem_DecreaseQuantity_OnNegativeQuantity_ReturnsError(t *testing.T) {
 	productId := uuid.New()
 	cart, _ := cart.NewCartItem(productId, 5, 2550)
 
@@ -107,7 +107,7 @@ func Test_decrease_quantity_with_negative_quantity_should_fail(t *testing.T) {
 	assert.EqualError(t, err, "quantity value cannot be negative")
 }
 
-func Test_decrease_quantity_with_quantity_less_than_one_should_fail(t *testing.T) {
+func TestCartItem_DecreaseQuantity_OnQuantityLessThanOne_ReturnsError(t *testing.T) {
 	cart, _ := cart.NewCartItem(uuid.New(), 0, 2500)
 
 	err := cart.DecreaseQuantity(0)

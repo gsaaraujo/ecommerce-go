@@ -7,14 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_create_quantity_should_succeed(t *testing.T) {
+func TestQuantity_NewQuantity_OnValidValue_ReturnsQuantity(t *testing.T) {
 	sut, err := models.NewQuantity(10)
 
 	assert.NoError(t, err)
 	assert.Equal(t, int32(10), sut.Value)
 }
 
-func Test_create_quantity_with_negative_value_should_fail(t *testing.T) {
+func TestQuantity_NewQuantity_OnNegativeValue_ReturnsError(t *testing.T) {
 	_, err := models.NewQuantity(-8)
 
 	assert.EqualError(t, err, "quantity value cannot be negative")

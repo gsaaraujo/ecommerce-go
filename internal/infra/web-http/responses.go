@@ -1,5 +1,7 @@
 package webhttp
 
+import "github.com/labstack/echo/v4"
+
 type ResponseError struct {
 	Status       string `json:"status"`
 	StatusCode   uint16 `json:"statusCode"`
@@ -21,74 +23,74 @@ type ResponseSuccess struct {
 	Data       interface{} `json:"data"`
 }
 
-func NewOk(data interface{}) ResponseSuccess {
-	return ResponseSuccess{
+func NewOk(c echo.Context, data interface{}) error {
+	return c.JSON(200, ResponseSuccess{
 		Status:     "SUCCESS",
 		StatusCode: 200,
 		StatusText: "OK",
 		Data:       data,
-	}
+	})
 }
 
-func NewBadRequestValidation(errorMessages []string) ResponseErrors {
-	return ResponseErrors{
+func NewBadRequestValidation(c echo.Context, errorMessages []string) error {
+	return c.JSON(400, ResponseErrors{
 		Status:        "ERROR",
 		StatusCode:    400,
 		StatusText:    "BAD_REQUEST",
 		ErrorMessages: errorMessages,
-	}
+	})
 }
 
-func NewBadRequest(errorMessage string) ResponseError {
-	return ResponseError{
+func NewBadRequest(c echo.Context, errorMessage string) error {
+	return c.JSON(400, ResponseError{
 		Status:       "ERROR",
 		StatusCode:   400,
 		StatusText:   "BAD_REQUEST",
 		ErrorMessage: errorMessage,
-	}
-
+	})
 }
-func NewUnauthorizedRequest(errorMessage string) ResponseError {
-	return ResponseError{
+
+func NewUnauthorizedRequest(c echo.Context, errorMessage string) error {
+	return c.JSON(401, ResponseError{
 		Status:       "ERROR",
 		StatusCode:   401,
 		StatusText:   "UNAUTHORIZED",
 		ErrorMessage: errorMessage,
-	}
+	})
 }
 
-func NewForbiddenRequest(errorMessage string) ResponseError {
-	return ResponseError{
+func NewForbiddenRequest(c echo.Context, errorMessage string) error {
+	return c.JSON(401, ResponseError{
 		Status:       "ERROR",
 		StatusCode:   401,
 		StatusText:   "FORBIDDEN",
 		ErrorMessage: errorMessage,
-	}
+	})
 }
 
-func NewNotFound(errorMessage string) ResponseError {
-	return ResponseError{
+func NewNotFound(c echo.Context, errorMessage string) error {
+	return c.JSON(404, ResponseError{
 		Status:       "ERROR",
 		StatusCode:   404,
 		StatusText:   "NOT_FOUND",
 		ErrorMessage: errorMessage,
-	}
+	})
 }
 
-func NewConflict(errorMessage string) ResponseError {
-	return ResponseError{
+func NewConflict(c echo.Context, errorMessage string) error {
+	return c.JSON(409, ResponseError{
 		Status:       "ERROR",
 		StatusCode:   409,
 		StatusText:   "CONFLICT",
 		ErrorMessage: errorMessage,
-	}
+	})
 }
 
-func NewInternalServerError(errorMessage string) ResponseError {
-	return ResponseError{
+func NewInternalServerError(c echo.Context, errorMessage string) error {
+	return c.JSON(500, ResponseError{
 		Status:       "ERROR",
 		StatusCode:   500,
 		StatusText:   "INTERNAL_SERVER_ERROR",
 		ErrorMessage: errorMessage,
-	}
+	})
 }

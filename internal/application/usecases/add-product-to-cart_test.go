@@ -76,7 +76,7 @@ func (a *AddProductToCartSuite) SetupTest() {
 	}
 }
 
-func (a *AddProductToCartSuite) Test_add_product_to_new_cart_should_succeed() {
+func (a *AddProductToCartSuite) TestAddProductToCart_Execute_OnNewCartAndNoErrors_SavesCartAndReturnsNil() {
 	product := gateways.ProductDTO{
 		Id:    uuid.New(),
 		Price: int64(3550),
@@ -98,7 +98,7 @@ func (a *AddProductToCartSuite) Test_add_product_to_new_cart_should_succeed() {
 	a.cartRepositoryMock.AssertNumberOfCalls(a.T(), "Update", 0)
 }
 
-func (a *AddProductToCartSuite) Test_add_product_to_existing_cart_should_succeed() {
+func (a *AddProductToCartSuite) TestAddProductToCart_Execute_OnExistingCartAndNoErrors_UpdatesCartAndReturnsNil() {
 	customerCart := cart.Cart{
 		Id:         uuid.New(),
 		CustomerId: uuid.New(),
@@ -125,7 +125,7 @@ func (a *AddProductToCartSuite) Test_add_product_to_existing_cart_should_succeed
 	a.cartRepositoryMock.AssertNumberOfCalls(a.T(), "Update", 1)
 }
 
-func (a *AddProductToCartSuite) Test_add_product_to_cart_with_customer_that_does_not_exist_should_fail() {
+func (a *AddProductToCartSuite) TestAddProductToCart_Execute_OnCustomerNotFound_ReturnsError() {
 	product := gateways.ProductDTO{
 		Id:    uuid.New(),
 		Price: int64(3550),
@@ -143,7 +143,7 @@ func (a *AddProductToCartSuite) Test_add_product_to_cart_with_customer_that_does
 	a.EqualError(err, "customer not found")
 }
 
-func (a *AddProductToCartSuite) Test_add_product_to_cart_with_product_that_does_not_exist_should_fail() {
+func (a *AddProductToCartSuite) TestAddProductToCart_Execute_OnProductNotFound_ReturnsError() {
 	a.customerGatewayMock.On("ExistsById", mock.Anything).Return(true, nil)
 	a.productGatewayMock.On("FindOneById", mock.Anything).Return(nil, nil)
 	input := usecases.AddProductToCartInput{

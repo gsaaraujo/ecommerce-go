@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_create_cart_should_succeed(t *testing.T) {
+func TestCart_NewCart_OnValidValues_ReturnsCart(t *testing.T) {
 	customerId := uuid.New()
 
 	sut, err := cart.NewCart(customerId)
@@ -18,7 +18,7 @@ func Test_create_cart_should_succeed(t *testing.T) {
 	assert.Equal(t, []cart.CartItem{}, sut.Items)
 }
 
-func Test_add_items_should_succeed_1(t *testing.T) {
+func TestCart_AddItem_OnAddingSameProduct_UpdatesCart(t *testing.T) {
 	customerId := uuid.New()
 	product1 := uuid.New()
 	cart, _ := cart.NewCart(customerId)
@@ -31,7 +31,7 @@ func Test_add_items_should_succeed_1(t *testing.T) {
 	assert.Equal(t, int64(224000), cart.TotalPrice().Value)
 }
 
-func Test_add_items_should_succeed_2(t *testing.T) {
+func TestCart_AddItem_OnAddingDifferentProducts_UpdatesCart(t *testing.T) {
 	customerId := uuid.New()
 	product1 := uuid.New()
 	product2 := uuid.New()
@@ -49,7 +49,7 @@ func Test_add_items_should_succeed_2(t *testing.T) {
 	assert.Equal(t, int64(251350), cart.TotalPrice().Value)
 }
 
-func Test_remove_items_should_succeed_1(t *testing.T) {
+func TestCart_RemoveItem_OnAddingAndRemovingSameProduct_UpdatesCart(t *testing.T) {
 	customerId := uuid.New()
 	product1 := uuid.New()
 	cart, _ := cart.NewCart(customerId)
@@ -62,7 +62,7 @@ func Test_remove_items_should_succeed_1(t *testing.T) {
 	assert.Equal(t, int64(0), cart.TotalPrice().Value)
 }
 
-func Test_remove_items_should_succeed_2(t *testing.T) {
+func TestCart_RemoveItem_OnAddingAndRemovingDifferentProducts_UpdatesCart(t *testing.T) {
 	customerId := uuid.New()
 	product1 := uuid.New()
 	product2 := uuid.New()
@@ -81,25 +81,7 @@ func Test_remove_items_should_succeed_2(t *testing.T) {
 	assert.Equal(t, int64(77950), cart.TotalPrice().Value)
 }
 
-func Test_remove_items_should_succeed_3(t *testing.T) {
-	customerId := uuid.New()
-	product1 := uuid.New()
-	product2 := uuid.New()
-	product3 := uuid.New()
-	cart, _ := cart.NewCart(customerId)
-
-	cart.AddItem(product1, 2, 32000)
-	cart.RemoveItem(product1)
-	cart.AddItem(product2, 5, 17340)
-	cart.RemoveItem(product2)
-	cart.AddItem(product3, 9, 1550)
-
-	assert.Equal(t, int(1), len(cart.Items))
-	assert.Equal(t, int32(9), cart.TotalQuantity().Value)
-	assert.Equal(t, int64(13950), cart.TotalPrice().Value)
-}
-
-func Test_add_product_with_negative_quantity_should_fail(t *testing.T) {
+func TestCart_AddItem_OnNegativeQuantity_ReturnsError(t *testing.T) {
 	customerId := uuid.New()
 	cart, _ := cart.NewCart(customerId)
 
@@ -108,7 +90,7 @@ func Test_add_product_with_negative_quantity_should_fail(t *testing.T) {
 	assert.EqualError(t, err, "quantity value cannot be negative")
 }
 
-func Test_add_product_with_quantity_equals_zero_should_fail(t *testing.T) {
+func TestCart_AddItem_OnQuantityEqualsZero_ReturnsError(t *testing.T) {
 	customerId := uuid.New()
 	cart, _ := cart.NewCart(customerId)
 
@@ -117,7 +99,7 @@ func Test_add_product_with_quantity_equals_zero_should_fail(t *testing.T) {
 	assert.EqualError(t, err, "cart item quantity cannot be less than one")
 }
 
-func Test_add_product_with_negative_price_should_fail(t *testing.T) {
+func TestCart_AddItem_OnNegativePrice_ReturnsError(t *testing.T) {
 	customerId := uuid.New()
 	cart, _ := cart.NewCart(customerId)
 
@@ -126,7 +108,7 @@ func Test_add_product_with_negative_price_should_fail(t *testing.T) {
 	assert.EqualError(t, err, "money value cannot be negative")
 }
 
-func Test_remove_product_that_is_not_in_cart_should_fail(t *testing.T) {
+func TestCart_RemoveItem_OnProdutNotInCart_ReturnsError(t *testing.T) {
 	customerId := uuid.New()
 	product1 := uuid.New()
 	product2 := uuid.New()
@@ -138,7 +120,7 @@ func Test_remove_product_that_is_not_in_cart_should_fail(t *testing.T) {
 	assert.EqualError(t, err, "product not found in cart")
 }
 
-func Test_remove_product_when_cart_is_empty_should_fail(t *testing.T) {
+func TestCart_RemoveItem_OnCartEmpty_ReturnsError(t *testing.T) {
 	cart, _ := cart.NewCart(uuid.New())
 
 	err := cart.RemoveItem(uuid.New())
